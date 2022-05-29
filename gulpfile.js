@@ -6,11 +6,10 @@
 
 // ##### [EXPORT ALL TASKS] ############################################################################################
 
-// TODO:: gulp-load-subtasks or something similar
-
 export {default as disco} from "./gulp/tasks/disco.js";
 export {default as postFont} from "./gulp/tasks/post-font.js";
-
+export {default as sassCompile} from "./gulp/tasks/sass-compile.js";
+export {default as watchFiles} from "./gulp/tasks/watch.js";
 
 // ##### [DEFAULT TASKS] ###############################################################################################
 

@@ -3,20 +3,29 @@
  * @version 1.0.0
  */
 
+// #####################################################################################################################
+
 import args from 'minimist';
 import del from "del";
 import Fontmin from 'fontmin';
 import log from 'fancy-log';
 
-import config from '../config/config.js';
+// #####################################################################################################################
 
+import config from '../config.js';
+
+// #####################################################################################################################
+
+/**
+ *
+ */
 function postFont(done) {
     const sourceExtension = args(process.argv)["source"] || config.tasks.postFont.defaultExtension;
     const sourceFontName = args(process.argv)["name"] || config.tasks.postFont.defaultFontName;
 
     const fontCompress = new Fontmin()
-        .src(`./${config.paths.font}${sourceFontName}/*.${sourceExtension}`)
-        .dest(`./${config.paths.font}${sourceFontName}/`)
+        .src(`./${config.paths.default.font}${sourceFontName}/*.${sourceExtension}`)
+        .dest(`./${config.paths.default.font}${sourceFontName}/`)
 
 
     fontCompress.run(function (err, files) {
@@ -24,12 +33,14 @@ function postFont(done) {
             throw err;
         }
 
-        del(`./${config.paths.font}${sourceFontName}/*.css`).then(_ => {
-            log(`Success deleted following files: \n\r ./${config.paths.font}${sourceFontName}/*.css`);
+        del(`./${config.paths.default.font}${sourceFontName}/*.css`).then(_ => {
+            log(`Success deleted following files: \n\r ./${config.paths.default.font}${sourceFontName}/*.css`);
             done();
         });
     });
 }
+
+// #####################################################################################################################
 
 postFont.displayName = "post-font";
 postFont.description = "Convert and minify font files.";
@@ -38,5 +49,7 @@ postFont.flags = {
 };
 export {postFont};
 export default postFont;
+
+// #####################################################################################################################
 
 // EOF
