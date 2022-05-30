@@ -15,6 +15,7 @@ import del from "del";
 
 import {sassCompileFile} from "./sass-compile.js";
 import config from '../config.js';
+import pathGroup from "../helpers/path-group.js";
 
 // #####################################################################################################################
 
@@ -23,23 +24,29 @@ import config from '../config.js';
  */
 function unlinkRelativeFile(eventPath) {
     const ext = path.extname(eventPath).replace(".", "");
+
+    const currentPaths = pathGroup(eventPath, ext, true);
+
     let deleteQueue = [];
 
     switch (ext) {
         case 'scss':
-            //css dev
-            //css build
+            deleteQueue.push(currentPaths.development.css + path.relative(currentPaths.scss, eventPath).replace('.scss', '.css'));
             break
         case 'js':
             //js.map
             //js dev
-            //js build
             break
     }
 
     if (deleteQueue.length) {
         del(deleteQueue).then(_ => {
-            log("Deleted related file: " + deleteQueue);
+            let message = 'Deleted related files:';
+            deleteQueue.forEach(filePath => {
+                message += `\n\r ./${filePath}`
+            });
+
+            log(message);
         });
     }
 }

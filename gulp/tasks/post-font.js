@@ -12,6 +12,10 @@ import log from 'fancy-log';
 
 // #####################################################################################################################
 
+import colors from "ansi-colors";
+
+// #####################################################################################################################
+
 import config from '../config.js';
 
 // #####################################################################################################################
@@ -22,22 +26,29 @@ import config from '../config.js';
 function postFont(done) {
     const sourceExtension = args(process.argv)["source"] || config.tasks.postFont.defaultExtension;
     const sourceFontName = args(process.argv)["name"] || config.tasks.postFont.defaultFontName;
+    const sourceGroup = args(process.argv)["group"] || config.tasks.postFont.defaultGroup;
 
-    const fontCompress = new Fontmin()
-        .src(`./${config.paths.default.font}${sourceFontName}/*.${sourceExtension}`)
-        .dest(`./${config.paths.default.font}${sourceFontName}/`)
+    if (config.paths.hasOwnProperty(sourceGroup) && config.paths[sourceGroup]['font']) {
+        const fontPath = config.paths[sourceGroup]['font'] + sourceFontName + '/';
 
+        const fontCompress = new Fontmin()
+            .src(`./${fontPath}*.${sourceExtension}`)
+            .dest(`./${fontPath}/`);
 
-    fontCompress.run(function (err, files) {
-        if (err) {
-            throw err;
-        }
+        fontCompress.run(function (err, files) {
+            if (err) {
+                throw err;
+            }
 
-        del(`./${config.paths.default.font}${sourceFontName}/*.css`).then(_ => {
-            log(`Success deleted following files: \n\r ./${config.paths.default.font}${sourceFontName}/*.css`);
-            done();
+            del(`./${fontPath}*.css`).then(_ => {
+                log(`Deleted following files: \n\r ./${fontPath}*.css`);
+                done();
+            });
         });
-    });
+    } else {
+        log(colors.yellow(`WARRING paths group '${sourceGroup}' not exist!`));
+        done();
+    }
 }
 
 // #####################################################################################################################

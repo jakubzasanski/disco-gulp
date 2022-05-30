@@ -33,8 +33,6 @@ function sassCompileAll(done) {
 
     const sass = gulpSass(dartSDK ? dartSassEmbedded : dartSass);
 
-    log("Starting to compile...");
-
     let tasks = [];
     config.pathsGroup.forEach(group => {
         tasks.push(new Promise((resolve) => {
@@ -43,7 +41,6 @@ function sassCompileAll(done) {
     });
 
     Promise.all(tasks).then(() => {
-        log("All scss compiled.");
         done();
     });
 
@@ -54,9 +51,7 @@ function sassCompileAll(done) {
             gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
                 .pipe(sass({}, false).on('error', sass.logError))
                 .pipe(gulp.dest(currentPaths.development.css))
-                .on("end", function () {
-                    callback();
-                });
+                .on("end", callback());
         } else {
             callback();
         }

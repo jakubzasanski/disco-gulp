@@ -6,7 +6,9 @@
 
 // ##### [EXPORT ALL TASKS] ############################################################################################
 
+export {default as build} from "./gulp/tasks/build.js";
 export {default as disco} from "./gulp/tasks/disco.js";
+export {default as postCss} from "./gulp/tasks/post-css.js";
 export {default as postFont} from "./gulp/tasks/post-font.js";
 export {default as sassCompile} from "./gulp/tasks/sass-compile.js";
 export {default as watchFiles} from "./gulp/tasks/watch.js";

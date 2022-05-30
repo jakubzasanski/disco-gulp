@@ -27,7 +27,7 @@ moduleExport.paths = {
             css: 'admin/assets/development/css/'
         },
         production: {
-
+            css: 'admin/assets/production/css/'
         }
     },
     system: {
@@ -38,7 +38,7 @@ moduleExport.paths = {
             css: 'assets/development/css/'
         },
         production: {
-
+            css: 'assets/production/css/'
         }
     }
 };
@@ -49,7 +49,8 @@ moduleExport.paths = {
 moduleExport.tasks = {
     postFont: {
         defaultExtension: 'ttf',
-        defaultFontName: 'roboto'
+        defaultFontName: 'roboto',
+        defaultGroup: 'system'
     }
 };
 
