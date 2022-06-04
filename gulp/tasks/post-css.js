@@ -9,6 +9,7 @@ import gulp from 'gulp';
 import postCSS from 'gulp-postcss';
 import cssNano from 'cssnano';
 import autoprefixer from 'autoprefixer';
+import rename from 'gulp-rename';
 
 // #####################################################################################################################
 
@@ -38,6 +39,7 @@ function postCss(done) {
             gulp.src(currentPaths.development.css + "**/*.css")
                 .pipe(postCSS([autoprefixer()]))
                 .pipe(postCSS([cssNano()]))
+                .pipe(rename({"suffix": ".min"}))
                 .pipe(gulp.dest(currentPaths.production.css))
                 .on("end", callback());
 

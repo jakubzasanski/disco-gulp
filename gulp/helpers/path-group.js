@@ -4,17 +4,25 @@ import config from '../config.js';
 function pathGroup(file, type, returnAll = false) {
     let _return = {};
     if (file && type && config.pathsGroup) {
-        file = path.resolve(path.dirname(file));
-        for (let pathType of config.pathsGroup) {
-            if (config.paths.hasOwnProperty(pathType) && config.paths[pathType][type]) {
-                if (dirContains(path.resolve(config.paths[pathType][type]), file)) {
-                    if (returnAll) {
-                        _return = config.paths[pathType];
-                    } else {
-                        _return = config.paths[pathType][type];
+        if (config.pathsGroup.length > 1) {
+            file = path.resolve(path.dirname(file));
+            for (let pathType of config.pathsGroup) {
+                if (config.paths.hasOwnProperty(pathType) && config.paths[pathType][type]) {
+                    if (dirContains(path.resolve(config.paths[pathType][type]), file)) {
+                        if (returnAll) {
+                            _return = config.paths[pathType];
+                        } else {
+                            _return = config.paths[pathType][type];
+                        }
+                        break;
                     }
-                    break;
                 }
+            }
+        } else if (config.pathsGroup[0]) {
+            if (returnAll) {
+                _return = config.paths[config.pathsGroup[0]];
+            } else {
+                _return = config.paths[config.pathsGroup[0]][type];
             }
         }
     }

@@ -57,20 +57,21 @@ function unlinkRelativeFile(eventPath) {
  *
  */
 function watchFiles() {
-    gulp.watch(
-        [
-            config.paths.system.scss + '**/*.scss',
-            config.paths.admin.scss + '**/*.scss'
-        ]
-    ).on('change', function (eventPath) {
-        sassCompileFile(eventPath, function () {
+    let sassPaths = [];
+    for (let pathGroup of config.pathsGroup) {
+        if (config.paths.hasOwnProperty(pathGroup) && config.paths[pathGroup]['scss']) {
+            sassPaths.push(`${config.paths[pathGroup]['scss']}**/*.scss`);
+        }
+    }
+
+    gulp.watch(sassPaths)
+        .on('change', function (eventPath) {
+            sassCompileFile(eventPath,{});
+        }).on('add', function (eventPath) {
+            sassCompileFile(eventPath,{});
+        }).on('unlink', function (eventPath) {
+            unlinkRelativeFile(eventPath);
         });
-    }).on('add', function (eventPath) {
-        sassCompileFile(eventPath, function () {
-        });
-    }).on('unlink', function (eventPath) {
-        unlinkRelativeFile(eventPath);
-    });
 }
 
 // #####################################################################################################################
