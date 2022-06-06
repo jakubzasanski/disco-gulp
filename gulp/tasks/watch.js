@@ -5,17 +5,20 @@
 
 // #####################################################################################################################
 
+import del from "del";
 import gulp from 'gulp';
 import log from "fancy-log";
 import path from "path";
 
-import del from "del";
+// #####################################################################################################################
+
+import {jsTranspileFile} from "./js-transpile.js";
+import {sassCompileFile} from "./sass-compile.js";
+import pathGroup from "../helpers/path-group.js";
 
 // #####################################################################################################################
 
-import {sassCompileFile} from "./sass-compile.js";
 import config from '../config.js';
-import pathGroup from "../helpers/path-group.js";
 
 // #####################################################################################################################
 
@@ -32,15 +35,16 @@ function unlinkRelativeFile(eventPath) {
     switch (ext) {
         case 'scss':
             deleteQueue.push(currentPaths.development.css + path.relative(currentPaths.scss, eventPath).replace('.scss', '.css'));
+            deleteQueue.push(currentPaths.development.css + path.relative(currentPaths.scss, eventPath).replace('.scss', '.css.map'));
             break
         case 'js':
-            //js.map
-            //js dev
+            deleteQueue.push(currentPaths.development.js + path.relative(currentPaths.js, eventPath));
+            deleteQueue.push(currentPaths.development.js + path.relative(currentPaths.js, eventPath).replace('.js', '.js.map'));
             break
     }
 
     if (deleteQueue.length) {
-        del(deleteQueue).then(_ => {
+        del(deleteQueue).then( _ => {
             let message = 'Deleted related files:';
             deleteQueue.forEach(filePath => {
                 message += `\n\r ./${filePath}`
@@ -57,19 +61,41 @@ function unlinkRelativeFile(eventPath) {
  *
  */
 function watchFiles() {
-    let sassPaths = [];
+    let watchPaths = {
+        scss: [],
+        js: []
+    };
+
     for (let pathGroup of config.pathsGroup) {
-        if (config.paths.hasOwnProperty(pathGroup) && config.paths[pathGroup]['scss']) {
-            sassPaths.push(`${config.paths[pathGroup]['scss']}**/*.scss`);
+        if (config.paths.hasOwnProperty(pathGroup)){
+            if(config.paths[pathGroup]['scss']){
+                watchPaths.scss.push(`${config.paths[pathGroup]['scss']}**/*.scss`);
+            }
+            if(config.paths[pathGroup]['js']){
+                watchPaths.js.push(`${config.paths[pathGroup]['js']}**/*.js`);
+            }
         }
     }
 
-    gulp.watch(sassPaths)
+    gulp.watch(watchPaths.scss)
         .on('change', function (eventPath) {
-            sassCompileFile(eventPath,{});
-        }).on('add', function (eventPath) {
-            sassCompileFile(eventPath,{});
-        }).on('unlink', function (eventPath) {
+            sassCompileFile(eventPath,_ => {});
+        })
+        .on('add', function (eventPath) {
+            sassCompileFile(eventPath,_ => {});
+        })
+        .on('unlink', function (eventPath) {
+            unlinkRelativeFile(eventPath);
+        });
+
+    gulp.watch(watchPaths.js)
+        .on('change', function (eventPath) {
+            jsTranspileFile(eventPath,_ => {});
+        })
+        .on('add', function (eventPath) {
+            jsTranspileFile(eventPath,_ => {});
+        })
+        .on('unlink', function (eventPath) {
             unlinkRelativeFile(eventPath);
         });
 }

@@ -22,23 +22,29 @@ moduleExport.paths = {
     admin: {
         main: 'admin/assets/',
         scss: 'admin/assets/development/source/scss/',
+        js: 'admin/assets/development/source/js/',
         font: 'admin/assets/public/font/',
         development: {
-            css: 'admin/assets/development/css/'
+            css: 'admin/assets/development/css/',
+            js: 'admin/assets/development/js/'
         },
         production: {
-            css: 'admin/assets/production/css/'
+            css: 'admin/assets/production/css/',
+            js: 'admin/assets/production/js/'
         }
     },
     system: {
         main: 'assets/',
         scss: 'assets/development/source/scss/',
+        js: 'assets/development/source/js/',
         font: 'assets/public/font/',
         development: {
-            css: 'assets/development/css/'
+            css: 'assets/development/css/',
+            js: 'assets/development/js/'
         },
         production: {
-            css: 'assets/production/css/'
+            css: 'assets/production/css/',
+            js: 'assets/production/js/'
         }
     }
 };

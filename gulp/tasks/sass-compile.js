@@ -13,11 +13,17 @@ import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
 import log from 'fancy-log';
 import sassPartialsImported from 'gulp-sass-partials-imported';
+import sourcemaps from 'gulp-sourcemaps';
 
 // #####################################################################################################################
 
-import pathGroup from '../helpers/path-group.js';
 import config from '../config.js';
+import pathGroup from '../helpers/path-group.js';
+
+// #####################################################################################################################
+
+const dartSDK = args(process.argv)["dart"];
+const sass = gulpSass(dartSDK ? dartSassEmbedded : dartSass);
 
 // #####################################################################################################################
 
@@ -25,13 +31,9 @@ import config from '../config.js';
  *
  */
 function sassCompileAll(done) {
-    const dartSDK = args(process.argv)["dart"];
-
     if (dartSDK) {
         log(`Compile sass using native ${colors.blue(colors.bold("Dart SDK"))}...`);
     }
-
-    const sass = gulpSass(dartSDK ? dartSassEmbedded : dartSass);
 
     let tasks = [];
     config.pathsGroup.forEach(group => {
@@ -49,7 +51,9 @@ function sassCompileAll(done) {
             const currentPaths = config.paths[group];
 
             gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
+                .pipe(sourcemaps.init())
                 .pipe(sass({}, false).on('error', sass.logError))
+                .pipe(sourcemaps.write('.'))
                 .pipe(gulp.dest(currentPaths.development.css))
                 .on("end", callback());
         } else {
@@ -66,19 +70,17 @@ function sassCompileAll(done) {
 function sassCompileFile(file, done) {
     const start = Date.now();
 
-    const dartSDK = args(process.argv)["dart"];
-
     if (dartSDK) {
         log(`Compile sass using native ${colors.blue(colors.bold("Dart SDK"))}...`);
     }
-
-    const sass = gulpSass(dartSDK ? dartSassEmbedded : dartSass);
 
     const currentPaths = pathGroup(file, 'scss', true);
 
     gulp.src(file)
         .pipe(sassPartialsImported(currentPaths.scss))
+        .pipe(sourcemaps.init())
         .pipe(sass({}, false).on('error', sass.logError))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(currentPaths.development.css))
         .on("end", _ => {
             const duration = Date.now() - start;

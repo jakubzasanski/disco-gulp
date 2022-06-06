@@ -2,12 +2,16 @@ Example gulpfile.js with separate tasks in multiple files.
 Provides frontend environment and tools for web development.
 Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets/`)
 
-![License](https://img.shields.io/github/license/jakubzasanski/disco-gulp)
+![version](https://img.shields.io/github/v/tag/jakubzasanski/disco-gulp?label=version)
+![license](https://img.shields.io/github/license/jakubzasanski/disco-gulp)
+
+---
 
 ### Features
 - SCSS compiler (Dart Sass)
 - Js transpiler (Babel)
 - CSS & Js minifying (CSSNano & Uglify)
+- Source maps
 - CSS autoprefixer
 - Images and SVGs compress
 - Icon font generator
@@ -16,7 +20,30 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 ### Tasks
 
 ```text
-
+├─┬ build         Optimize your project for production
+│ │ --dart        …Use native Dart SDK
+│ └─┬ <series>
+│   └─┬ <parallel>
+│     ├─┬ <series>
+│     │ ├── sass-compile
+│     │ └── post-css
+│     └─┬ <series>
+│       ├── js-transpile
+│       └── post-js
+├─┬ default
+│ └─┬ <series>
+│   └── welcome
+├── welcome       Prints welcome section to the console.
+├── js-transpile  Transpile JavaScript to most supported version.
+├── post-css      Add prefixes and compress css.
+├── post-font     Convert and minify font files.
+│   --name        …Set source name
+│   --source      …Set source extension
+├── post-js       Add prefixes and compress css.
+├── sass-compile  Compile scss to css files.
+│   --dart        …Use native Dart SDK
+└── watch         Compiles scss files and transpiles js files in real time.
+    --dart        …Use native Dart SDK
 ```
 
 ---

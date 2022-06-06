@@ -39,5 +39,6 @@ function dirContains(parent, dir) {
     }
 }
 
-
 export default pathGroup;
+
+// EOF
