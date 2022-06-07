@@ -17,6 +17,7 @@ import config from '../config.js';
 import pathGroup from '../helpers/path-group.js';
 import rename from "gulp-rename";
 import path from "path";
+import del from "del";
 
 // #####################################################################################################################
 
@@ -39,14 +40,21 @@ function jsTranspileAll(done) {
         if (config.paths.hasOwnProperty(group)) {
             const currentPaths = config.paths[group];
 
-            gulp.src(`${currentPaths.js}**/*.js`)
-                .pipe(sourcemaps.init())
-                .pipe(babel({
-                    "presets": [["@babel/preset-env", {"targets": "defaults"}]]
-                }))
-                .pipe(sourcemaps.write('.'))
-                .pipe(gulp.dest(currentPaths.development.js))
-                .on("end", callback());
+            const deleteQueue = [
+                `${currentPaths.development.js}**/*.js`,
+                `${currentPaths.development.js}**/*.js.map`
+            ];
+
+            del(deleteQueue).then( _ => {
+                gulp.src(`${currentPaths.js}**/*.js`)
+                    .pipe(sourcemaps.init())
+                    .pipe(babel({
+                        "presets": [["@babel/preset-env", {"targets": "defaults"}]]
+                    }))
+                    .pipe(sourcemaps.write('.'))
+                    .pipe(gulp.dest(currentPaths.development.js))
+                    .on("end", _ => callback());
+            });
         } else {
             callback();
         }

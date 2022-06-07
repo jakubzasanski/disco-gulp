@@ -19,6 +19,7 @@ import sourcemaps from 'gulp-sourcemaps';
 
 import config from '../config.js';
 import pathGroup from '../helpers/path-group.js';
+import del from "del";
 
 // #####################################################################################################################
 
@@ -50,12 +51,19 @@ function sassCompileAll(done) {
         if (config.paths.hasOwnProperty(group)) {
             const currentPaths = config.paths[group];
 
-            gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
-                .pipe(sourcemaps.init())
-                .pipe(sass({}, false).on('error', sass.logError))
-                .pipe(sourcemaps.write('.'))
-                .pipe(gulp.dest(currentPaths.development.css))
-                .on("end", callback());
+            const deleteQueue = [
+                `${currentPaths.development.css}**/*.css`,
+                `${currentPaths.development.css}**/*.css.map`
+            ];
+
+            del(deleteQueue).then( _ => {
+                gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
+                    .pipe(sourcemaps.init())
+                    .pipe(sass({}, false).on('error', sass.logError))
+                    .pipe(sourcemaps.write('.'))
+                    .pipe(gulp.dest(currentPaths.development.css))
+                    .on("end", _ => callback());
+            });
         } else {
             callback();
         }
