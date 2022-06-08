@@ -1,0 +1,11 @@
+
+$font-name: {{fontName}};
+$font-version: {{fontVersion}};
+
+$font-glyphs: (
+{{#each fontGlyphs}}
+    {{name}}: "\\{{unicode}}",
+{{/each}}
+);
+
+// EOF

@@ -11,8 +11,8 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 - SCSS compiler (Dart Sass)
 - Js transpiler (Babel)
 - CSS & Js minifying (CSSNano & Uglify)
-- Source maps
 - CSS autoprefixer
+- Source maps
 - Images and SVGs compress
 - Icon font generator
 - Minify font
@@ -34,6 +34,7 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 │ └─┬ <series>
 │   └── welcome
 ├── welcome       Prints welcome section to the console.
+├── icon-font
 ├── js-transpile  Transpile JavaScript to most supported version.
 ├── post-css      Add prefixes and compress css.
 ├── post-font     Convert and minify font files.
