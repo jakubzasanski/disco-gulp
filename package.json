@@ -1,6 +1,6 @@
 {
   "name": "disco-gulp",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Provides environment and tools for web development.",
   "type": "module",
   "scripts": {
@@ -39,7 +39,7 @@
     "gulp-uglify": "^3.0.2",
     "handlebars": "^4.7.7",
     "minimist": "^1.2.6",
-    "sass": "^1.52.2",
-    "sass-embedded": "^1.52.2"
+    "sass": "^1.52.3",
+    "sass-embedded": "^1.52.3"
   }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="test1" horiz-adv-x="1000">
+    <font-face font-family="test1"
+      units-per-em="1000" ascent="1000"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="home"
+      unicode="&#xEA01;"
+      horiz-adv-x="1000" d="M1000 423.40625L500 811.53125L0 423.40625V581.65625L500 969.78125L1000 581.65625zM875 437.5V62.5H625V312.5H375V62.5H125V437.5L500 718.75z" />
+    <glyph glyph-name="home2"
+      unicode="&#xEA02;"
+      horiz-adv-x="1000" d="M500 968.75L0 468.75L93.75 375L187.5 468.75V62.5H437.5V250H562.5V62.5H812.5V468.75L906.25 375L1000 468.75L500 968.75zM500 562.5C465.46875 562.5 437.5 590.46875 437.5 625S465.46875 687.5 500 687.5C534.53125 687.5 562.5 659.53125 562.5 625S534.53125 562.5 500 562.5z" />
+  </font>
+</defs>
+</svg>

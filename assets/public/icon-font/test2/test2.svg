@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="test2" horiz-adv-x="1000">
+    <font-face font-family="test2"
+      units-per-em="1000" ascent="1000"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="home3"
+      unicode="&#xEA01;"
+      horiz-adv-x="1000" d="M1000 406.25L812.5 593.75V875H687.5V718.75L500 906.25L0 406.25V375H125V62.5H437.5V250H562.5V62.5H875V375H1000z" />
+    <glyph glyph-name="newspaper"
+      unicode="&#xEA02;"
+      horiz-adv-x="1000" d="M875 750V875H0V187.5C0 152.96875 27.96875 125 62.5 125H906.25C958.03125 125 1000 166.96875 1000 218.75V750H875zM812.5 187.5H62.5V812.5H812.5V187.5zM125 687.5H750V625H125zM500 562.5H750V500H500zM500 437.5H750V375H500zM500 312.5H687.5V250H500zM125 562.5H437.5V250H125z" />
+    <glyph glyph-name="office"
+      unicode="&#xEA03;"
+      horiz-adv-x="1000" d="M0 0H500V1000H0V0zM312.5 875H437.5V750H312.5V875zM312.5 625H437.5V500H312.5V625zM312.5 375H437.5V250H312.5V375zM62.5 875H187.5V750H62.5V875zM62.5 625H187.5V500H62.5V625zM62.5 375H187.5V250H62.5V375zM562.5 687.5H1000V625H562.5zM562.5 0H687.5V250H875V0H1000V562.5H562.5z" />
+  </font>
+</defs>
+</svg>
