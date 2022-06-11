@@ -5,7 +5,7 @@ $font-prefix: {{fontPrefix}};
 
 $font-glyphs: (
 {{#each fontGlyphs}}
-    {{name}}: "\\{{unicode}}",
+    {{@key}}: "{{this}}",
 {{/each}}
 );
 

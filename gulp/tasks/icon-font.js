@@ -15,7 +15,6 @@ import Handlebars from 'handlebars';
 import config from '../config.js';
 import fs from "fs";
 import path from 'path';
-import url from 'url';
 
 const timestamp = Math.round(Date.now() / 1000);
 
@@ -74,10 +73,23 @@ function generateIconFont(_fontName, _pathGroup, callback) {
     const currentPaths = config.paths[_pathGroup];
 
     if (fs.existsSync(`${currentPaths.iconsSets}${_fontName}/`)) {
+
+        const jsonMap = `${currentPaths.iconsSets}${_fontName}/map.json`;
+        const jsonData = fs.existsSync(jsonMap) ? JSON.parse(fs.readFileSync(jsonMap)) : {};
+
+        let lastUnicode = jsonData.lastUnicode ? jsonData.lastUnicode : 60000;
+        const unicodeMap = jsonData.unicodeMap ? jsonData.unicodeMap : {};
+
         gulp.src(`${currentPaths.iconsSets}${_fontName}/*.svg`)
             .pipe(iconfont({
-                fontName: _fontName,
-                prependUnicode: true,
+                fontName: `${_pathGroup}-${_fontName}`,
+                metadataProvider: function (file, cb) {
+                    const fileName = path.basename(file, path.extname(file))
+                    cb(false, {
+                        name: fileName,
+                        unicode: [String.fromCodePoint((unicodeMap[fileName]) ? unicodeMap[fileName] : ++lastUnicode)]
+                    });
+                },
                 normalize: true,
                 fontHeight: 1000,
                 formats: ['eot', 'svg', 'ttf', 'woff', 'woff2'],
@@ -85,21 +97,15 @@ function generateIconFont(_fontName, _pathGroup, callback) {
             }))
             .on('glyphs', function (glyphs, options) {
 
-                let map = {};
+                const mapData = fontMap(glyphs);
 
-                glyphs.forEach(function (glyph) {
-                    map[glyph.name] = "\\" + glyph.unicode[0].charCodeAt(0).toString(16).toUpperCase();
-                })
-
-                glyphs = map;
-
-                fs.writeFileSync(`${currentPaths.iconsSets}${_fontName}/map.json`, JSON.stringify(glyphs));
+                fs.writeFileSync(jsonMap, JSON.stringify(mapData.json));
 
                 const data = {
                     fontName: options.fontName,
                     fontVersion: options.timestamp,
                     fontPrefix: `icon-font-${options.fontName}`,
-                    fontGlyphs: glyphs
+                    fontGlyphs: mapData.glyphs
                 };
 
                 fontData(_fontName, _pathGroup, data);
@@ -111,6 +117,12 @@ function generateIconFont(_fontName, _pathGroup, callback) {
         console.log('nie ma fonta');
         callback();
     }
+}
+
+function test(aa, done) {
+    console.log(aa);
+
+    return aa;
 }
 
 /*
@@ -168,6 +180,27 @@ function fontData(_fontName, _pathGroup, data) {
             fs.writeFileSync(`${currentPaths.iconsScss}_${_fontName}.scss`, result);
         }
     }
+}
+
+function fontMap(glyphs) {
+    let iconsMap = {
+        json: {
+            lastUnicode: 0,
+            unicodeMap: {}
+        },
+        glyphs: {}
+    };
+
+    glyphs.forEach(function (glyph) {
+        const code = glyph.unicode[0].charCodeAt(0);
+        if (code > iconsMap.json.lastUnicode) {
+            iconsMap.json.lastUnicode = code;
+        }
+        iconsMap.json.unicodeMap[glyph.name] = code;
+        iconsMap.glyphs[glyph.name] = "\\" + code.toString(16).toUpperCase();
+    })
+
+    return iconsMap;
 }
 
 // #####################################################################################################################

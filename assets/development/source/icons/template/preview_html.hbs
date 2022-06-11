@@ -4,6 +4,10 @@
     <title></title>
 </head>
     <body>
-        <i class="icon-font-test1-home2"></i>
+
+    {{#each fontGlyphs}}
+        <i class="{{../fontPrefix}}-{{@key}}"></i>
+    {{/each}}
+
     </body>
 </html>
