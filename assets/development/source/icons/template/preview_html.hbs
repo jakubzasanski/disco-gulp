@@ -1,13 +1,41 @@
 <html lang="en">
-<head>
-    <link rel="stylesheet" href="./style.css?ts={{fontVersion}}">
-    <title></title>
-</head>
+    <head>
+        <link rel="stylesheet" href="./style.css?ts={{fontVersion}}">
+        <title></title>
+        <script>
+            let timer;
+            function copyText(obj) {
+
+                if(obj.dataset['copytext']){
+                    navigator.clipboard.writeText(obj.dataset['copytext']);
+                    const notification = document.querySelector('.js__notification');;
+                    if(notification){
+                        notification.innerHTML = `Copied: ${obj.dataset['copytext']}`;
+                        notification.classList.add('-active');
+                        clearTimeout(timer);
+                        timer = setTimeout(function (){
+                            notification.classList.remove('-active');
+                        }, 1800);
+                    }
+                }
+            }
+        </script>
+    </head>
     <body>
+        <div class="container">
+            <div class="iconsPreview__top">
+                Font name: {{fontName}}
+            </div>
+            <div class="iconsPreview">
 
-    {{#each fontGlyphs}}
-        <i class="{{../fontPrefix}}-{{@key}}"></i>
-    {{/each}}
+            {{#each fontGlyphs}}
+                <button onclick="copyText(this);" data-copyText="{{../fontPrefix}}-{{@key}}" title="Click to copy class" class="iconsPreview__item">
+                    <i class="{{../fontPrefix}}-{{@key}}"></i>
+                </button>
+            {{/each}}
 
+            </div>
+        </div>
+        <div class="notification js__notification"></div>
     </body>
 </html>

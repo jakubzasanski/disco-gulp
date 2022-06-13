@@ -5,19 +5,21 @@
 
 // #####################################################################################################################
 
-import babel from 'gulp-babel';
-import colors from "ansi-colors";
-import gulp from 'gulp';
-import log from 'fancy-log';
-import sourcemaps from 'gulp-sourcemaps';
+import config from '../config.js';
+import pathGroup from '../helpers/path-group.js';
+import errorHandler from "../helpers/error-handler.js";
 
 // #####################################################################################################################
 
-import config from '../config.js';
-import pathGroup from '../helpers/path-group.js';
-import rename from "gulp-rename";
-import path from "path";
+import babel from 'gulp-babel';
+import colors from "ansi-colors";
 import del from "del";
+import gulp from 'gulp';
+import log from 'fancy-log';
+import path from "path";
+import plumber from "gulp-plumber";
+import rename from "gulp-rename";
+import sourcemaps from 'gulp-sourcemaps';
 
 // #####################################################################################################################
 
@@ -45,8 +47,11 @@ function jsTranspileAll(done) {
                 `${currentPaths.development.js}**/*.js.map`
             ];
 
-            del(deleteQueue).then( _ => {
+            del(deleteQueue).then(_ => {
                 gulp.src(`${currentPaths.js}**/*.js`)
+                    .pipe(plumber({
+                        errorHandler: errorHandler
+                    }))
                     .pipe(sourcemaps.init())
                     .pipe(babel({
                         "presets": [["@babel/preset-env", {"targets": "defaults"}]]
@@ -72,6 +77,9 @@ function jsTranspileFile(file, done) {
     const currentPaths = pathGroup(file, 'js', true);
 
     gulp.src(file)
+        .pipe(plumber({
+            errorHandler: errorHandler
+        }))
         .pipe(sourcemaps.init())
         .pipe(babel({
             "presets": [["@babel/preset-env", {"targets": "defaults"}]]

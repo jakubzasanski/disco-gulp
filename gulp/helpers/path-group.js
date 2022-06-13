@@ -1,5 +1,15 @@
+
+/**
+ * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
+ * @version 1.0.0
+ */
+
+// #####################################################################################################################
+
 import path from "path";
 import config from '../config.js';
+
+// #####################################################################################################################
 
 function pathGroup(file, type, returnAll = false) {
     let _return = {};

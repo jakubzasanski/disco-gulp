@@ -20,6 +20,8 @@ import sourcemaps from 'gulp-sourcemaps';
 import config from '../config.js';
 import pathGroup from '../helpers/path-group.js';
 import del from "del";
+import plumber from "gulp-plumber";
+import errorHandler from "../helpers/error-handler.js";
 
 // #####################################################################################################################
 
@@ -58,8 +60,11 @@ function sassCompileAll(done) {
 
             del(deleteQueue).then( _ => {
                 gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
+                    .pipe(plumber({
+                        errorHandler: errorHandler
+                    }))
                     .pipe(sourcemaps.init())
-                    .pipe(sass({}, false).on('error', sass.logError))
+                    .pipe(sass({}, false))
                     .pipe(sourcemaps.write('.'))
                     .pipe(gulp.dest(currentPaths.development.css))
                     .on("end", _ => callback());
@@ -85,9 +90,12 @@ function sassCompileFile(file, done) {
     const currentPaths = pathGroup(file, 'scss', true);
 
     gulp.src(file)
+        .pipe(plumber({
+            errorHandler: errorHandler
+        }))
         .pipe(sassPartialsImported(currentPaths.scss))
         .pipe(sourcemaps.init())
-        .pipe(sass({}, false).on('error', sass.logError))
+        .pipe(sass({}, false))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(currentPaths.development.css))
         .on("end", _ => {

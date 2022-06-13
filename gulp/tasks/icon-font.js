@@ -7,7 +7,6 @@
 
 import gulp from 'gulp';
 import iconfont from 'gulp-iconfont';
-
 import Handlebars from 'handlebars';
 
 // #####################################################################################################################
@@ -15,29 +14,37 @@ import Handlebars from 'handlebars';
 import config from '../config.js';
 import fs from "fs";
 import path from 'path';
+import plumber from "gulp-plumber";
+import errorHandler from "../helpers/error-handler.js";
+import colors from "ansi-colors";
+import log from 'fancy-log';
 
 const timestamp = Math.round(Date.now() / 1000);
 
 // #####################################################################################################################
 
-/**
- *
- */
+/*
+* Generate iconfont from svg icons
+*/
 function iconFont(done) {
-    const fontName = 'test1';
+    const fontName = 'test';
     const pathGroup = 'system';
-    const allPathGroup = true;
+    const allPathGroup = false;
 
     if (allPathGroup) {
         let tasks = [];
         config.pathsGroup.forEach(_pathGroup => {
             const iconSets = fs.readdirSync(config.paths[_pathGroup].iconsSets, {withFileTypes: true}).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name)
 
-            iconSets.forEach(_fontName => {
-                tasks.push(new Promise((resolve) => {
-                    generateIconFont(_fontName, _pathGroup, resolve);
-                }));
-            });
+            if (iconSets.length > 0) {
+                iconSets.forEach(_fontName => {
+                    tasks.push(new Promise((resolve) => {
+                        generateIconFont(_fontName, _pathGroup, resolve);
+                    }));
+                });
+            } else {
+                log(colors.yellow(`WARRING: not found fonts in path group \`${_pathGroup}\``));
+            }
         });
 
         Promise.all(tasks).then(() => {
@@ -46,27 +53,30 @@ function iconFont(done) {
         });
 
     } else {
-        if (pathGroup && config.paths.hasOwnProperty(pathGroup)) {
-            if (fontName) {
-                generateIconFont(fontName, pathGroup, function () {
-                    fontsPreview();
-                    done();
-                });
-            } else {
-                //
-                console.log('error mising font name');
-                done();
+        if (pathGroup) {
+            if(config.paths.hasOwnProperty(pathGroup)) {
+                if (fontName) {
+                    generateIconFont(fontName, pathGroup, function () {
+                        fontsPreview();
+                        done();
+                    });
+                } else {
+                    done(new Error(colors.red(`Missing '--name' argument`)));
+                }
+            }
+            else{
+                done(new Error(colors.red(`Following path group \`${pathGroup}\` not exist`)));
             }
         } else {
-            //
-            console.log('error mising font name');
-            done();
+            done(new Error(colors.red(`Missing '--path' argument`)));
         }
     }
 }
 
+// #####################################################################################################################
+
 /*
-* Generate single font preview files
+* Generate icon font
 */
 function generateIconFont(_fontName, _pathGroup, callback) {
 
@@ -81,6 +91,9 @@ function generateIconFont(_fontName, _pathGroup, callback) {
         const unicodeMap = jsonData.unicodeMap ? jsonData.unicodeMap : {};
 
         gulp.src(`${currentPaths.iconsSets}${_fontName}/*.svg`)
+            .pipe(plumber({
+                errorHandler: errorHandler
+            }))
             .pipe(iconfont({
                 fontName: `${_pathGroup}-${_fontName}`,
                 metadataProvider: function (file, cb) {
@@ -112,18 +125,60 @@ function generateIconFont(_fontName, _pathGroup, callback) {
                 fontPreview(_fontName, _pathGroup, data);
             })
             .pipe(gulp.dest(`${currentPaths.iconsFont}${_fontName}/`))
-            .on("end", _ => callback());
+            .on("end", function(){
+                log(colors.cyan(`Successful created font \`${_pathGroup}-${_fontName}\` in ${currentPaths.iconsFont}${_fontName}/`));
+                callback();
+            });
     } else {
-        console.log('nie ma fonta');
-        callback();
+        callback(new Error(colors.red(`Following path \`${`${currentPaths.iconsSets}${_fontName}/` }\` not exist`)));
     }
 }
 
-function test(aa, done) {
-    console.log(aa);
+// #####################################################################################################################
 
-    return aa;
+/*
+* Generate icon font map
+*/
+function fontMap(glyphs) {
+    let iconsMap = {
+        json: {
+            lastUnicode: 0,
+            unicodeMap: {}
+        },
+        glyphs: {}
+    };
+
+    glyphs.forEach(function (glyph) {
+        const code = glyph.unicode[0].charCodeAt(0);
+        if (code > iconsMap.json.lastUnicode) {
+            iconsMap.json.lastUnicode = code;
+        }
+        iconsMap.json.unicodeMap[glyph.name] = code;
+        iconsMap.glyphs[glyph.name] = "\\" + code.toString(16).toUpperCase();
+    })
+
+    return iconsMap;
 }
+
+// #####################################################################################################################
+
+/*
+* Generate scss icon font data and map file
+*/
+function fontData(_fontName, _pathGroup, data) {
+    const currentPaths = config.paths[_pathGroup];
+
+    const templateSCSS = fs.readFileSync(`${currentPaths.iconsTemplate}data.hbs`)
+    if (templateSCSS) {
+        const template = Handlebars.compile(templateSCSS.toString());
+        const result = template(data);
+        if (result) {
+            fs.writeFileSync(`${currentPaths.iconsScss}_${_fontName}.scss`, result);
+        }
+    }
+}
+
+// #####################################################################################################################
 
 /*
 * Generate single font preview files
@@ -159,6 +214,8 @@ function fontPreview(_fontName, _pathGroup, data) {
     }
 }
 
+// #####################################################################################################################
+
 /*
 * Generate all avalible fonts preview file
 */
@@ -166,47 +223,15 @@ function fontsPreview() {
 
 }
 
-/*
-* Generate scss icon font data and map file
-*/
-function fontData(_fontName, _pathGroup, data) {
-    const currentPaths = config.paths[_pathGroup];
-
-    const templateSCSS = fs.readFileSync(`${currentPaths.iconsTemplate}data.hbs`)
-    if (templateSCSS) {
-        const template = Handlebars.compile(templateSCSS.toString());
-        const result = template(data);
-        if (result) {
-            fs.writeFileSync(`${currentPaths.iconsScss}_${_fontName}.scss`, result);
-        }
-    }
-}
-
-function fontMap(glyphs) {
-    let iconsMap = {
-        json: {
-            lastUnicode: 0,
-            unicodeMap: {}
-        },
-        glyphs: {}
-    };
-
-    glyphs.forEach(function (glyph) {
-        const code = glyph.unicode[0].charCodeAt(0);
-        if (code > iconsMap.json.lastUnicode) {
-            iconsMap.json.lastUnicode = code;
-        }
-        iconsMap.json.unicodeMap[glyph.name] = code;
-        iconsMap.glyphs[glyph.name] = "\\" + code.toString(16).toUpperCase();
-    })
-
-    return iconsMap;
-}
-
 // #####################################################################################################################
 
 iconFont.displayName = 'icon-font';
-iconFont.description = "";
+iconFont.description = "Generate iconfont from svg files";
+iconFont.flags = {
+    '--name': 'set iconfont name',
+    '--group': 'set path group',
+    '--all': 'generate all icon fonts'
+};
 export default iconFont;
 
 // #####################################################################################################################
