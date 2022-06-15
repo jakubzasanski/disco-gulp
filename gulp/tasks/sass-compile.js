@@ -7,11 +7,11 @@
 
 import args from 'minimist';
 import colors from "ansi-colors";
-import dartSass from 'sass';
-import dartSassEmbedded from 'sass-embedded';
+import del from "del";
 import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
 import log from 'fancy-log';
+import plumber from "gulp-plumber";
 import sassPartialsImported from 'gulp-sass-partials-imported';
 import sourcemaps from 'gulp-sourcemaps';
 
@@ -19,24 +19,41 @@ import sourcemaps from 'gulp-sourcemaps';
 
 import config from '../config.js';
 import pathGroup from '../helpers/path-group.js';
-import del from "del";
-import plumber from "gulp-plumber";
 import errorHandler from "../helpers/error-handler.js";
+import niceDuration from "../helpers/nice-duration.js";
 
 // #####################################################################################################################
 
-const dartSDK = args(process.argv)["dart"];
-const sass = gulpSass(dartSDK ? dartSassEmbedded : dartSass);
+const engineFlag = args(process.argv)["engine"] || 'dart';
+
+let engine;
+let engineName;
+
+switch (engineFlag){
+    case 'node':
+        engineName = colors.green('libSass');
+        engine = await import('node-sass');
+        break;
+    case 'dart':
+        engineName = colors.blue('DartSass DartSDK');
+        engine = await import('sass-embedded');
+        break;
+    case 'dart-js':
+        engineName = colors.yellow('DartSass Js');
+        engine = await import('sass');
+        engine = engine.default;
+        break;
+}
+
+log(`Compile sass using ${colors.bold(engineName)}`);
+const sass = gulpSass(engine);
 
 // #####################################################################################################################
 
 /**
- *
+ * Compiling all sass files from all path group
  */
 function sassCompileAll(done) {
-    if (dartSDK) {
-        log(`Compile sass using native ${colors.blue(colors.bold("Dart SDK"))}...`);
-    }
 
     let tasks = [];
     config.pathsGroup.forEach(group => {
@@ -78,15 +95,10 @@ function sassCompileAll(done) {
 // #####################################################################################################################
 
 /**
- *
+ * Compile single sass file
  */
 function sassCompileFile(file, done) {
     const start = Date.now();
-
-    if (dartSDK) {
-        log(`Compile sass using native ${colors.blue(colors.bold("Dart SDK"))}...`);
-    }
-
     const currentPaths = pathGroup(file, 'scss', true);
 
     gulp.src(file)
@@ -99,11 +111,7 @@ function sassCompileFile(file, done) {
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(currentPaths.development.css))
         .on("end", _ => {
-            const duration = Date.now() - start;
-            const durationDisplay = (duration > 1000) ? (duration / 1000).toFixed(2) + ' s' : duration + ' ms';
-
-            log(`Finished compiling ${file} in ${colors.magenta(durationDisplay)}`);
-
+            log(`Finished compiling ${file} in ${colors.magenta(niceDuration(Date.now() - start))}`);
             done();
         });
 }
@@ -112,7 +120,7 @@ function sassCompileFile(file, done) {
 
 sassCompileAll.displayName = 'sass-compile';
 sassCompileAll.description = 'Compile scss to css files.';
-sassCompileAll.flags = {'--dart': 'Use native Dart SDK'};
+sassCompileAll.flags = {'--engine': 'Choose engine node|dart|dart-js'};
 export {sassCompileFile, sassCompileAll};
 export default sassCompileAll;
 

@@ -8,16 +8,18 @@
 import gulp from 'gulp';
 import iconfont from 'gulp-iconfont';
 import Handlebars from 'handlebars';
-
-// #####################################################################################################################
-
-import config from '../config.js';
 import fs from "fs";
 import path from 'path';
 import plumber from "gulp-plumber";
-import errorHandler from "../helpers/error-handler.js";
 import colors from "ansi-colors";
 import log from 'fancy-log';
+
+// #####################################################################################################################
+
+import errorHandler from "../helpers/error-handler.js";
+import config from '../config.js';
+
+// #####################################################################################################################
 
 const timestamp = Math.round(Date.now() / 1000);
 

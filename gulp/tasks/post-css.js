@@ -8,12 +8,14 @@
 import autoprefixer from 'autoprefixer';
 import cssNano from 'cssnano';
 import gulp from 'gulp';
+import plumber from "gulp-plumber";
 import postCSS from 'gulp-postcss';
 import rename from 'gulp-rename';
 
 // #####################################################################################################################
 
 import config from '../config.js';
+import errorHandler from "../helpers/error-handler.js";
 
 // #####################################################################################################################
 
@@ -37,6 +39,9 @@ function postCss(done) {
             const currentPaths = config.paths[group];
 
             gulp.src(currentPaths.development.css + "**/*.css")
+                .pipe(plumber({
+                    errorHandler: errorHandler
+                }))
                 .pipe(postCSS([autoprefixer(), cssNano()]))
                 .pipe(rename({"suffix": ".min"}))
                 .pipe(gulp.dest(currentPaths.production.css))

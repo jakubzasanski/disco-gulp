@@ -7,12 +7,10 @@
 
 import args from 'minimist';
 import del from "del";
+import colors from "ansi-colors";
 import Fontmin from 'fontmin';
 import log from 'fancy-log';
 
-// #####################################################################################################################
-
-import colors from "ansi-colors";
 
 // #####################################################################################################################
 
@@ -21,7 +19,7 @@ import config from '../config.js';
 // #####################################################################################################################
 
 /**
- *
+ * Convert and compress font files
  */
 function postFont(done) {
     const sourceExtension = args(process.argv)["source"] || config.tasks.postFont.defaultExtension;

@@ -22,7 +22,7 @@ const build = gulp.series(gulp.parallel(gulp.series(sassCompileAll, postCss), gu
 
 build.displayName = 'build';
 build.description = 'Optimize your project for production';
-build.flags = {'--dart': 'Use native Dart SDK'};
+build.flags = {'--engine': 'Choose engine node|dart|dart-js'};
 export default build;
 
 // #####################################################################################################################

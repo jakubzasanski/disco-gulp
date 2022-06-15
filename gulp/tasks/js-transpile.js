@@ -20,6 +20,7 @@ import path from "path";
 import plumber from "gulp-plumber";
 import rename from "gulp-rename";
 import sourcemaps from 'gulp-sourcemaps';
+import niceDuration from "../helpers/nice-duration.js";
 
 // #####################################################################################################################
 
@@ -92,11 +93,7 @@ function jsTranspileFile(file, done) {
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(currentPaths.development.js))
         .on("end", _ => {
-            const duration = Date.now() - start;
-            const durationDisplay = (duration > 1000) ? (duration / 1000).toFixed(2) + ' s' : duration + ' ms';
-
-            log(`Finished transpiling ${file} in ${colors.magenta(durationDisplay)}`);
-
+            log(`Finished transpiling ${file} in ${colors.magenta(niceDuration(Date.now() - start))}`);
             done();
         });
 }

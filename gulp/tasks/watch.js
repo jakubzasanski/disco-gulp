@@ -23,7 +23,7 @@ import config from '../config.js';
 // #####################################################################################################################
 
 /**
- *
+ * Delete relative files
  */
 function unlinkRelativeFile(eventPath) {
     const ext = path.extname(eventPath).replace(".", "");
@@ -58,7 +58,7 @@ function unlinkRelativeFile(eventPath) {
 // #####################################################################################################################
 
 /**
- *
+ * Watch project files
  */
 function watchFiles() {
     let watchPaths = {
@@ -104,7 +104,7 @@ function watchFiles() {
 
 watchFiles.displayName = 'watch';
 watchFiles.description = "Compiles scss files and transpiles js files in real time.";
-watchFiles.flags = {'--dart': 'Use native Dart SDK'};
+watchFiles.flags = {'--engine': 'Choose engine node|dart|dart-js'};
 export default watchFiles;
 
 // #####################################################################################################################

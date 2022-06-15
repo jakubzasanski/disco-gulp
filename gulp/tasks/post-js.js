@@ -6,17 +6,19 @@
 // #####################################################################################################################
 
 import gulp from 'gulp';
+import plumber from "gulp-plumber";
 import rename from 'gulp-rename';
 import uglify from 'gulp-uglify';
 
 // #####################################################################################################################
 
 import config from '../config.js';
+import errorHandler from "../helpers/error-handler.js";
 
 // #####################################################################################################################
 
 /**
- *
+ * Compress all js files from all paths group
  */
 function postJs(done) {
     let tasks = [];
@@ -35,6 +37,9 @@ function postJs(done) {
             const currentPaths = config.paths[group];
 
             gulp.src(currentPaths.development.js + "**/*.js")
+                .pipe(plumber({
+                    errorHandler: errorHandler
+                }))
                 .pipe(uglify())
                 .pipe(rename({"suffix": ".min"}))
                 .pipe(gulp.dest(currentPaths.production.js))
@@ -49,7 +54,7 @@ function postJs(done) {
 // #####################################################################################################################
 
 postJs.displayName = 'post-js';
-postJs.description = "Add prefixes and compress css.";
+postJs.description = "Compress js files.";
 export default postJs;
 
 // #####################################################################################################################
