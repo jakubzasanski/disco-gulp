@@ -10,7 +10,6 @@ import colors from "ansi-colors";
 import del from "del";
 import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
-import gulpIf from 'gulp-if';
 import log from 'fancy-log';
 import plumber from "gulp-plumber";
 import sassPartialsImported from 'gulp-sass-partials-imported';

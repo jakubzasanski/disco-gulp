@@ -21,30 +21,35 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 
 ```text
 ├─┬ build         Optimize your project for production
-│ │ --dart        …Use native Dart SDK
-│ └─┬ <series>
-│   └─┬ <parallel>
-│     ├─┬ <series>
-│     │ ├── sass-compile
-│     │ └── post-css
-│     └─┬ <series>
-│       ├── js-transpile
-│       └── post-js
+│ │ --engine      …Choose engine node|dart|dart-js
+│ └─┬ <parallel>
+│   ├─┬ <series>
+│   │ ├── sass-compile
+│   │ └── post-css
+│   ├─┬ <series>
+│   │ ├── js-transpile
+│   │ └── post-js
+│   └── post-images
 ├─┬ default
 │ └─┬ <series>
 │   └── welcome
 ├── welcome       Prints welcome section to the console.
-├── icon-font
+├── icon-font     Generate iconfont from svg files
+│   --all         …generate all icon fonts
+│   --group       …set path group
+│   --name        …set iconfont name
 ├── js-transpile  Transpile JavaScript to most supported version.
 ├── post-css      Add prefixes and compress css.
 ├── post-font     Convert and minify font files.
+│   --ext         …Set source extension
+│   --group       …Set source path group
 │   --name        …Set source name
-│   --source      …Set source extension
-├── post-js       Add prefixes and compress css.
+├── post-images   Optimize your project images for production
+├── post-js       Compress js files.
 ├── sass-compile  Compile scss to css files.
-│   --dart        …Use native Dart SDK
+│   --engine      …Choose engine node|dart|dart-js
 └── watch         Compiles scss files and transpiles js files in real time.
-    --dart        …Use native Dart SDK
+    --engine      …Choose engine node|dart|dart-js
 ```
 
 ---
