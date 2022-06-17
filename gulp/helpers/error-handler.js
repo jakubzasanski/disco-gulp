@@ -1,4 +1,3 @@
-
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
  * @version 1.0.0
@@ -10,6 +9,10 @@ import notify from "gulp-notify";
 
 // #####################################################################################################################
 
+/**
+ * Simple error handler
+ * @param error
+ */
 function errorHandler(error) {
     notify.onError({
         title: error.code,
@@ -18,4 +21,10 @@ function errorHandler(error) {
     })(error);
 }
 
+// #####################################################################################################################
+
 export default errorHandler;
+
+// #####################################################################################################################
+
+// EOF

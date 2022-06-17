@@ -9,14 +9,15 @@ import gulp from 'gulp';
 
 // #####################################################################################################################
 
-import sassCompileAll from './sass-compile.js';
+import {sassCompileAll} from './sass-compile.js';
 import postCss from './post-css.js';
 import jsTranspileAll from './js-transpile.js';
-import postJs from './post-Js.js';
+import postJs from './post-js.js';
+import postImages from './post-images.js';
 
 // #####################################################################################################################
 
-const build = gulp.series(gulp.parallel(gulp.series(sassCompileAll, postCss), gulp.series(jsTranspileAll, postJs)));
+const build = gulp.parallel(gulp.series(sassCompileAll, postCss), gulp.series(jsTranspileAll, postJs), postImages);
 
 // #####################################################################################################################
 

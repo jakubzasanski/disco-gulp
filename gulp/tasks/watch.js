@@ -14,16 +14,17 @@ import path from "path";
 
 import {jsTranspileFile} from "./js-transpile.js";
 import {sassCompileFile} from "./sass-compile.js";
-import pathGroup from "../helpers/path-group.js";
 
 // #####################################################################################################################
 
 import config from '../config.js';
+import pathGroup from "../helpers/path-group.js";
 
 // #####################################################################################################################
 
 /**
  * Delete relative files
+ * @param eventPath
  */
 function unlinkRelativeFile(eventPath) {
     const ext = path.extname(eventPath).replace(".", "");

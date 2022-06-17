@@ -16,6 +16,7 @@ import rename from 'gulp-rename';
 
 import config from '../config.js';
 import errorHandler from "../helpers/error-handler.js";
+import del from "del";
 
 // #####################################################################################################################
 
@@ -38,14 +39,20 @@ function postCss(done) {
         if (config.paths.hasOwnProperty(group)) {
             const currentPaths = config.paths[group];
 
-            gulp.src(currentPaths.development.css + "**/*.css")
-                .pipe(plumber({
-                    errorHandler: errorHandler
-                }))
-                .pipe(postCSS([autoprefixer(), cssNano()]))
-                .pipe(rename({"suffix": ".min"}))
-                .pipe(gulp.dest(currentPaths.production.css))
-                .on("end", callback());
+            const deleteQueue = [
+                `${currentPaths.production.css}**/*.css`,
+            ];
+
+            del(deleteQueue).then( _ => {
+                gulp.src(currentPaths.development.css + "**/*.css")
+                    .pipe(plumber({
+                        errorHandler: errorHandler
+                    }))
+                    .pipe(postCSS([autoprefixer(), cssNano()]))
+                    .pipe(rename({"suffix": ".min"}))
+                    .pipe(gulp.dest(currentPaths.production.css))
+                    .on("end", _ => callback());
+            });
         } else {
             callback();
         }

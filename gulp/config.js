@@ -32,11 +32,13 @@ moduleExport.paths = {
         font: 'admin/assets/public/font/',
         development: {
             css: 'admin/assets/development/css/',
-            js: 'admin/assets/development/js/'
+            js: 'admin/assets/development/js/',
+            images: 'admin/assets/development/images/'
         },
         production: {
             css: 'admin/assets/production/css/',
-            js: 'admin/assets/production/js/'
+            js: 'admin/assets/production/js/',
+            images: 'admin/assets/production/images/'
         }
     },
     system: {
@@ -52,25 +54,18 @@ moduleExport.paths = {
         font: 'assets/public/font/',
         development: {
             css: 'assets/development/css/',
-            js: 'assets/development/js/'
+            js: 'assets/development/js/',
+            images: 'assets/development/images/'
         },
         production: {
             css: 'assets/production/css/',
-            js: 'assets/production/js/'
+            js: 'assets/production/js/',
+            images: 'assets/production/images/'
         }
     }
 };
 
-/**
- *
- */
-moduleExport.tasks = {
-    postFont: {
-        defaultExtension: 'ttf',
-        defaultFontName: 'roboto',
-        defaultGroup: 'system'
-    }
-};
+// #####################################################################################################################
 
 export default moduleExport;
 

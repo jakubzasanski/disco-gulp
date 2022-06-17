@@ -1,4 +1,3 @@
-
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
  * @version 1.0.0
@@ -7,10 +6,21 @@
 // #####################################################################################################################
 
 import path from "path";
+
+// #####################################################################################################################
+
 import config from '../config.js';
 
 // #####################################################################################################################
 
+/**
+ * Get path group by file path
+ *
+ * @param file
+ * @param type
+ * @param returnAll
+ * @returns {Object}
+ */
 function pathGroup(file, type, returnAll = false) {
     let _return = {};
     if (file && type && config.pathsGroup) {
@@ -40,6 +50,15 @@ function pathGroup(file, type, returnAll = false) {
     return _return;
 }
 
+// #####################################################################################################################
+
+/**
+ * Check path
+ *
+ * @param parent
+ * @param dir
+ * @returns {boolean}
+ */
 function dirContains(parent, dir) {
     if (parent === dir) {
         return true;
@@ -49,6 +68,10 @@ function dirContains(parent, dir) {
     }
 }
 
+// #####################################################################################################################
+
 export default pathGroup;
+
+// #####################################################################################################################
 
 // EOF

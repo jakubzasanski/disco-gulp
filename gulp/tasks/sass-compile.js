@@ -10,6 +10,7 @@ import colors from "ansi-colors";
 import del from "del";
 import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
+import gulpIf from 'gulp-if';
 import log from 'fancy-log';
 import plumber from "gulp-plumber";
 import sassPartialsImported from 'gulp-sass-partials-imported';
@@ -53,9 +54,9 @@ const sass = gulpSass(engine);
 /**
  * Compiling all sass files from all path group
  */
-function sassCompileAll(done) {
+function sassCompileAll( done) {
 
-    let tasks = [];
+    const tasks = [];
     config.pathsGroup.forEach(group => {
         tasks.push(new Promise((resolve) => {
             compileScss(group, resolve);
@@ -96,6 +97,9 @@ function sassCompileAll(done) {
 
 /**
  * Compile single sass file
+ *
+ * @param file
+ * @param done
  */
 function sassCompileFile(file, done) {
     const start = Date.now();

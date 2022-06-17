@@ -1,6 +1,6 @@
 {
   "name": "disco-gulp",
-  "version": "0.6.5",
+  "version": "1.0.0",
   "description": "Provides environment and tools for web development.",
   "type": "module",
   "scripts": {
@@ -31,6 +31,7 @@
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-iconfont": "^11.0.1",
+    "gulp-imagemin": "^8.0.0",
     "gulp-notify": "^4.0.0",
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^9.0.1",

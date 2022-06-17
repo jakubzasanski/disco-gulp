@@ -11,6 +11,7 @@ export {default as disco} from "./gulp/tasks/disco.js";
 export {default as iconFont} from "./gulp/tasks/icon-font.js";
 export {default as jsTranspile} from "./gulp/tasks/js-transpile.js";
 export {default as postCss} from "./gulp/tasks/post-css.js";
+export {default as postImages} from "./gulp/tasks/post-images.js";
 export {default as postJs} from "./gulp/tasks/post-js.js";
 export {default as postFont} from "./gulp/tasks/post-font.js";
 export {default as sassCompile} from "./gulp/tasks/sass-compile.js";
