@@ -1,14 +1,15 @@
 <html lang="en">
     <head>
+        <link rel="stylesheet" href="../preview.css?ts={{fontVersion}}">
         <link rel="stylesheet" href="./style.css?ts={{fontVersion}}">
-        <title></title>
+        <title>Font preview - {{fontName}}</title>
         <script>
             let timer;
             function copyText(obj) {
 
                 if(obj.dataset['copytext']){
                     navigator.clipboard.writeText(obj.dataset['copytext']);
-                    const notification = document.querySelector('.js__notification');;
+                    const notification = document.querySelector('.js__notification');
                     if(notification){
                         notification.innerHTML = `Copied: ${obj.dataset['copytext']}`;
                         notification.classList.add('-active');

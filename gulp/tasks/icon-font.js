@@ -18,6 +18,7 @@ import log from 'fancy-log';
 
 import errorHandler from "../helpers/error-handler.js";
 import config from '../config.js';
+import args from "minimist";
 
 // #####################################################################################################################
 
@@ -29,9 +30,9 @@ const timestamp = Math.round(Date.now() / 1000);
 * Generate iconfont from svg icons
 */
 function iconFont(done) {
-    const fontName = 'test';
-    const pathGroup = 'system';
-    const allPathGroup = false;
+    const fontName = args(process.argv)["name"] || '';
+    const pathGroup = args(process.argv)["group"] || '';
+    const allPathGroup = args(process.argv)["all"] || false;
 
     if (allPathGroup) {
         let tasks = [];
@@ -41,7 +42,10 @@ function iconFont(done) {
             if (iconSets.length > 0) {
                 iconSets.forEach(_fontName => {
                     tasks.push(new Promise((resolve) => {
-                        generateIconFont(_fontName, _pathGroup, resolve);
+                        generateIconFont(_fontName, _pathGroup, function () {
+                            fontsPreview(_pathGroup);
+                            resolve();
+                        });
                     }));
                 });
             } else {
@@ -50,23 +54,21 @@ function iconFont(done) {
         });
 
         Promise.all(tasks).then(() => {
-            fontsPreview();
             done();
         });
 
     } else {
         if (pathGroup) {
-            if(config.paths.hasOwnProperty(pathGroup)) {
+            if (config.paths.hasOwnProperty(pathGroup)) {
                 if (fontName) {
                     generateIconFont(fontName, pathGroup, function () {
-                        fontsPreview();
+                        fontsPreview(pathGroup);
                         done();
                     });
                 } else {
                     done(new Error(colors.red(`Missing '--name' argument`)));
                 }
-            }
-            else{
+            } else {
                 done(new Error(colors.red(`Following path group \`${pathGroup}\` not exist`)));
             }
         } else {
@@ -127,12 +129,12 @@ function generateIconFont(_fontName, _pathGroup, callback) {
                 fontPreview(_fontName, _pathGroup, data);
             })
             .pipe(gulp.dest(`${currentPaths.iconsFont}${_fontName}/`))
-            .on("end", function(){
+            .on("end", function () {
                 log(colors.cyan(`Successful created font \`${_pathGroup}-${_fontName}\` in ${currentPaths.iconsFont}${_fontName}/`));
                 callback();
             });
     } else {
-        callback(new Error(colors.red(`Following path \`${`${currentPaths.iconsSets}${_fontName}/` }\` not exist`)));
+        callback(new Error(colors.red(`Following path \`${`${currentPaths.iconsSets}${_fontName}/`}\` not exist`)));
     }
 }
 
@@ -219,10 +221,38 @@ function fontPreview(_fontName, _pathGroup, data) {
 // #####################################################################################################################
 
 /*
-* Generate all avalible fonts preview file
+* Generate all available fonts preview file
 */
-function fontsPreview() {
+function fontsPreview(_pathGroup) {
+    const currentPaths = config.paths[_pathGroup];
 
+    const fonts = fs.readdirSync(currentPaths.iconsSets, {withFileTypes: true})
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+
+    let data = {};
+    if (fonts.length > 0) {
+        fonts.forEach(font => {
+            const jsonMap = fs.readFileSync(currentPaths.iconsSets + font + '/map.json');
+            if (jsonMap) {
+                data[font] = {
+                    fontName: font,
+                    fontVersion: timestamp,
+                    fontPrefix: `icon-font-${_pathGroup}-${font}`,
+                    map: JSON.parse(jsonMap.toString())
+                };
+            }
+        });
+
+        const templatePreviewHtml = fs.readFileSync(`${currentPaths.iconsTemplate}preview_all.hbs`)
+        if (templatePreviewHtml) {
+            const previewHtml = Handlebars.compile(templatePreviewHtml.toString());
+            const resultPreviewHtml = previewHtml(data);
+            if (resultPreviewHtml) {
+                fs.writeFileSync(`${currentPaths.iconsPreview}index.html`, resultPreviewHtml);
+            }
+        }
+    }
 }
 
 // #####################################################################################################################

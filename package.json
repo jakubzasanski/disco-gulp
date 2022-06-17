@@ -1,6 +1,6 @@
 {
   "name": "disco-gulp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provides environment and tools for web development.",
   "type": "module",
   "scripts": {

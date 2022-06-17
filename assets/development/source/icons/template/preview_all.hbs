@@ -1,0 +1,46 @@
+<html lang="en">
+    <head>
+        {{#each this}}
+            {{#if @first}}
+                <link rel="stylesheet" href="./preview.css?ts={{fontVersion}}">
+            {{/if}}
+            <link rel="stylesheet" href="./{{this.fontName}}/style.css?ts={{fontVersion}}">
+        {{/each}}
+        <title>Fonts preview</title>
+        <script>
+            let timer;
+            function copyText(obj) {
+
+                if(obj.dataset['copytext']){
+                    navigator.clipboard.writeText(obj.dataset['copytext']);
+                    const notification = document.querySelector('.js__notification');
+                    if(notification){
+                        notification.innerHTML = `Copied: ${obj.dataset['copytext']}`;
+                        notification.classList.add('-active');
+                        clearTimeout(timer);
+                        timer = setTimeout(function (){
+                            notification.classList.remove('-active');
+                        }, 1800);
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+    <div class="container">
+        {{#each this}}
+            <div class="iconsPreview__top">
+                Font name: {{fontName}}
+            </div>
+            <div class="iconsPreview">
+                {{#each map.unicodeMap}}
+                    <button onclick="copyText(this);" data-copyText="{{../fontPrefix}}-{{@key}}" title="Click to copy class" class="iconsPreview__item">
+                        <i class="{{../fontPrefix}}-{{@key}}"></i>
+                    </button>
+                {{/each}}
+            </div>
+        {{/each}}
+    </div>
+    <div class="notification js__notification"></div>
+    </body>
+</html>
