@@ -1,6 +1,6 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
@@ -11,7 +11,7 @@ import Handlebars from 'handlebars';
 import fs from "fs";
 import path from 'path';
 import plumber from "gulp-plumber";
-import colors from "ansi-colors";
+import chalk from "chalk";
 import log from 'fancy-log';
 
 // #####################################################################################################################
@@ -49,7 +49,7 @@ function iconFont(done) {
                     }));
                 });
             } else {
-                log(colors.yellow(`WARRING: not found fonts in path group \`${_pathGroup}\``));
+                log(chalk.yellow(`WARRING: not found fonts in path group \`${_pathGroup}\``));
             }
         });
 
@@ -66,13 +66,13 @@ function iconFont(done) {
                         done();
                     });
                 } else {
-                    done(new Error(colors.red(`Missing '--name' argument`)));
+                    done(new Error(chalk.red(`Missing '--name' argument`)));
                 }
             } else {
-                done(new Error(colors.red(`Following path group \`${pathGroup}\` not exist`)));
+                done(new Error(chalk.red(`Following path group \`${pathGroup}\` not exist`)));
             }
         } else {
-            done(new Error(colors.red(`Missing '--path' argument`)));
+            done(new Error(chalk.red(`Missing '--path' argument`)));
         }
     }
 }
@@ -130,11 +130,11 @@ function generateIconFont(_fontName, _pathGroup, callback) {
             })
             .pipe(gulp.dest(`${currentPaths.iconsFont}${_fontName}/`))
             .on("end", function () {
-                log(colors.cyan(`Successful created font \`${_pathGroup}-${_fontName}\` in ${currentPaths.iconsFont}${_fontName}/`));
+                log(chalk.cyan(`Successful created font \`${_pathGroup}-${_fontName}\` in ${currentPaths.iconsFont}${_fontName}/`));
                 callback();
             });
     } else {
-        callback(new Error(colors.red(`Following path \`${`${currentPaths.iconsSets}${_fontName}/`}\` not exist`)));
+        callback(new Error(chalk.red(`Following path \`${`${currentPaths.iconsSets}${_fontName}/`}\` not exist`)));
     }
 }
 

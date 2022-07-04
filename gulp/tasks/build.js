@@ -1,6 +1,6 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
@@ -23,7 +23,7 @@ const build = gulp.parallel(gulp.series(sassCompileAll, postCss), gulp.series(js
 
 build.displayName = 'build';
 build.description = 'Optimize your project for production';
-build.flags = {'--engine': 'Choose engine node|dart|dart-js'};
+build.flags = {'--engine': 'Choose engine dart|dart-js'};
 export default build;
 
 // #####################################################################################################################

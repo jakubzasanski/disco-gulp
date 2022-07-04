@@ -1,13 +1,13 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
 
 import args from 'minimist';
 import del from "del";
-import colors from "ansi-colors";
+import chalk from "chalk";
 import Fontmin from 'fontmin';
 import log from 'fancy-log';
 
@@ -48,20 +48,20 @@ function postFont(done) {
                         });
                     });
                 } else {
-                    log(colors.yellow(`WARRING paths group '${pathGroup}' not exist!`));
+                    log(chalk.yellow(`WARRING paths group '${pathGroup}' not exist!`));
                     done();
                 }
             } else {
-                log(colors.red(`ERROR: Undefined pathGroup, missing \`group\` argument.`));
+                log(chalk.red(`ERROR: Undefined pathGroup, missing \`group\` argument.`));
                 done();
             }
         } else {
-            log(colors.red(`ERROR: Undefined font file ext, missing \`ext\` argument.`));
+            log(chalk.red(`ERROR: Undefined font file ext, missing \`ext\` argument.`));
             done();
         }
     }
     else{
-        log(colors.red(`ERROR: Undefined font name, missing \`name\` argument.`));
+        log(chalk.red(`ERROR: Undefined font name, missing \`name\` argument.`));
         done();
     }
 }

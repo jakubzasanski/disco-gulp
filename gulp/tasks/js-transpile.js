@@ -1,6 +1,6 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
@@ -8,11 +8,12 @@
 import config from '../config.js';
 import pathGroup from '../helpers/path-group.js';
 import errorHandler from "../helpers/error-handler.js";
+import niceDuration from "../helpers/nice-duration.js";
 
 // #####################################################################################################################
 
 import babel from 'gulp-babel';
-import colors from "ansi-colors";
+import chalk from "chalk";
 import del from "del";
 import gulp from 'gulp';
 import log from 'fancy-log';
@@ -20,7 +21,6 @@ import path from "path";
 import plumber from "gulp-plumber";
 import rename from "gulp-rename";
 import sourcemaps from 'gulp-sourcemaps';
-import niceDuration from "../helpers/nice-duration.js";
 
 // #####################################################################################################################
 
@@ -44,12 +44,12 @@ function jsTranspileAll(done) {
             const currentPaths = config.paths[group];
 
             const deleteQueue = [
-                `${currentPaths.development.js}**/*.js`,
-                `${currentPaths.development.js}**/*.js.map`
+                `${currentPaths.source.js}**/*.js`,
+                `${currentPaths.source.js}**/*.js.map`
             ];
 
             del(deleteQueue).then(_ => {
-                gulp.src(`${currentPaths.js}**/*.js`)
+                gulp.src(`${currentPaths.source.js}**/*.js`)
                     .pipe(plumber({
                         errorHandler: errorHandler
                     }))
@@ -58,7 +58,7 @@ function jsTranspileAll(done) {
                         "presets": [["@babel/preset-env", {"targets": "defaults"}]]
                     }))
                     .pipe(sourcemaps.write('.'))
-                    .pipe(gulp.dest(currentPaths.development.js))
+                    .pipe(gulp.dest(currentPaths.target.js))
                     .on("end", _ => callback());
             });
         } else {
@@ -75,7 +75,7 @@ function jsTranspileAll(done) {
 function jsTranspileFile(file, done) {
     const start = Date.now();
 
-    const currentPaths = pathGroup(file, 'js', true);
+    const currentPaths = pathGroup(file, ['source', 'js'], true);
 
     gulp.src(file)
         .pipe(plumber({
@@ -86,14 +86,14 @@ function jsTranspileFile(file, done) {
             "presets": [["@babel/preset-env", {"targets": "defaults"}]]
         }))
         .pipe(rename(function (pipeFile) {
-            const jsPath = path.resolve(currentPaths.js);
+            const jsPath = path.resolve(currentPaths.source.js);
             const filePath = path.resolve(pipeFile.dirname);
             pipeFile.dirname = filePath === jsPath ? '.' : path.relative(jsPath, filePath);
         }))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(currentPaths.development.js))
+        .pipe(gulp.dest(currentPaths.target.js))
         .on("end", _ => {
-            log(`Finished transpiling ${file} in ${colors.magenta(niceDuration(Date.now() - start))}`);
+            log(`Finished transpiling ${file} in ${chalk.magenta(niceDuration(Date.now() - start))}`);
             done();
         });
 }

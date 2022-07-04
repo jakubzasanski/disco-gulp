@@ -1,12 +1,12 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
 
 import args from 'minimist';
-import colors from "ansi-colors";
+import chalk from "chalk";
 import del from "del";
 import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
@@ -30,22 +30,17 @@ let engine;
 let engineName;
 
 switch (engineFlag){
-    case 'node':
-        engineName = colors.green('libSass');
-        engine = await import('node-sass');
-        break;
     case 'dart':
-        engineName = colors.blue('DartSass DartSDK');
+        engineName = chalk.blue('DartSass DartSDK');
         engine = await import('sass-embedded');
         break;
     case 'dart-js':
-        engineName = colors.yellow('DartSass Js');
+        engineName = chalk.yellow('DartSass Js');
         engine = await import('sass');
         engine = engine.default;
         break;
 }
 
-log(`Compile sass using ${colors.bold(engineName)}`);
 const sass = gulpSass(engine);
 
 // #####################################################################################################################
@@ -54,6 +49,7 @@ const sass = gulpSass(engine);
  * Compiling all sass files from all path group
  */
 function sassCompileAll( done) {
+    log(`Compile sass using ${chalk.bold(engineName)}`);
 
     const tasks = [];
     config.pathsGroup.forEach(group => {
@@ -71,19 +67,19 @@ function sassCompileAll( done) {
             const currentPaths = config.paths[group];
 
             const deleteQueue = [
-                `${currentPaths.development.css}**/*.css`,
-                `${currentPaths.development.css}**/*.css.map`
+                `${currentPaths.target.scss}**/*.css`,
+                `${currentPaths.target.scss}**/*.css.map`
             ];
 
             del(deleteQueue).then( _ => {
-                gulp.src(`${currentPaths.scss}**/*.scss`, `!${currentPaths.scss}**/_*.scss`)
+                gulp.src(`${currentPaths.source.scss}**/*.scss`, `!${currentPaths.source.scss}**/_*.scss`)
                     .pipe(plumber({
                         errorHandler: errorHandler
                     }))
                     .pipe(sourcemaps.init())
                     .pipe(sass({}, false))
                     .pipe(sourcemaps.write('.'))
-                    .pipe(gulp.dest(currentPaths.development.css))
+                    .pipe(gulp.dest(currentPaths.target.scss))
                     .on("end", _ => callback());
             });
         } else {
@@ -101,20 +97,22 @@ function sassCompileAll( done) {
  * @param done
  */
 function sassCompileFile(file, done) {
+    log(`Compile sass using ${chalk.bold(engineName)}`);
+
     const start = Date.now();
-    const currentPaths = pathGroup(file, 'scss', true);
+    const currentPaths = pathGroup(file, ['source', 'scss'], true);
 
     gulp.src(file)
         .pipe(plumber({
             errorHandler: errorHandler
         }))
-        .pipe(sassPartialsImported(currentPaths.scss))
+        .pipe(sassPartialsImported(currentPaths.source.scss))
         .pipe(sourcemaps.init())
         .pipe(sass({}, false))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(currentPaths.development.css))
+        .pipe(gulp.dest(currentPaths.target.scss))
         .on("end", _ => {
-            log(`Finished compiling ${file} in ${colors.magenta(niceDuration(Date.now() - start))}`);
+            log(`Finished compiling ${file} in ${chalk.magenta(niceDuration(Date.now() - start))}`);
             done();
         });
 }
@@ -123,7 +121,7 @@ function sassCompileFile(file, done) {
 
 sassCompileAll.displayName = 'sass-compile';
 sassCompileAll.description = 'Compile scss to css files.';
-sassCompileAll.flags = {'--engine': 'Choose engine node|dart|dart-js'};
+sassCompileAll.flags = {'--engine': 'Choose engine dart|dart-js'};
 export {sassCompileFile, sassCompileAll};
 export default sassCompileAll;
 

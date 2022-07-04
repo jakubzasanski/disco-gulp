@@ -1,20 +1,21 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
 
+import del from "del";
 import gulp from 'gulp';
 import plumber from "gulp-plumber";
 import rename from 'gulp-rename';
+import sizeDiff from 'gulp-size-difference';
 import uglify from 'gulp-uglify';
 
 // #####################################################################################################################
 
 import config from '../config.js';
-import errorHandler from "../helpers/error-handler.js";
-import del from "del";
+import errorHandler from '../helpers/error-handler.js';
 
 // #####################################################################################################################
 
@@ -22,7 +23,7 @@ import del from "del";
  * Compress all js files from all paths group
  */
 function postJs(done) {
-    let tasks = [];
+    const tasks = [];
     config.pathsGroup.forEach(group => {
         tasks.push(new Promise((resolve) => {
             compressJs(group, resolve);
@@ -38,18 +39,23 @@ function postJs(done) {
             const currentPaths = config.paths[group];
 
             const deleteQueue = [
-                `${currentPaths.production.js}**/*.js`,
+                `${currentPaths.production.js}`,
             ];
 
-            del(deleteQueue).then( _ => {
+            del(deleteQueue).then(_ => {
                 gulp.src(currentPaths.development.js + "**/*.js")
                     .pipe(plumber({
                         errorHandler: errorHandler
                     }))
+                    .pipe(sizeDiff.start())
                     .pipe(uglify())
+                    .pipe(sizeDiff.stop({title: `JS ${group}`}))
                     .pipe(rename({"suffix": ".min"}))
                     .pipe(gulp.dest(currentPaths.production.js))
-                    .on("end", _ => callback());
+                    .on("end", _ => {
+                        callback();
+                    });
+
             });
         } else {
             callback();

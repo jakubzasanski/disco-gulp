@@ -4,9 +4,9 @@
 node_modules/
 package-lock.json
 ##### [DEVELOPMENT] ####################################################################################################
-admin/assets/development/css/*
-admin/assets/development/js/*
-assets/development/css/*
-assets/development/js/*
+admin/assets/development/css/compiled/*
+admin/assets/development/js/compiled/*
+assets/development/css/compiled/*
+assets/development/js/compiled/*
 ##### [GITKEEP] ########################################################################################################
 !**/**/.gitkeep

@@ -1,6 +1,6 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
@@ -24,25 +24,19 @@ import config from '../config.js';
 function pathGroup(file, type, returnAll = false) {
     let _return = {};
     if (file && type && config.pathsGroup) {
-        if (config.pathsGroup.length > 1) {
-            file = path.resolve(path.dirname(file));
-            for (let pathType of config.pathsGroup) {
-                if (config.paths.hasOwnProperty(pathType) && config.paths[pathType][type]) {
-                    if (dirContains(path.resolve(config.paths[pathType][type]), file)) {
-                        if (returnAll) {
-                            _return = config.paths[pathType];
-                        } else {
-                            _return = config.paths[pathType][type];
-                        }
-                        break;
+        file = path.resolve(path.dirname(file));
+        for (let pathGroup of config.pathsGroup) {
+            if (config.paths.hasOwnProperty(pathGroup)) {
+                const pathType = getObjectProperty(config.paths[pathGroup], type);
+
+                if (dirContains(path.resolve(pathType), file)) {
+                    if (returnAll) {
+                        _return = config.paths[pathGroup];
+                    } else {
+                        _return = pathType;
                     }
+                    break;
                 }
-            }
-        } else if (config.pathsGroup[0]) {
-            if (returnAll) {
-                _return = config.paths[config.pathsGroup[0]];
-            } else {
-                _return = config.paths[config.pathsGroup[0]][type];
             }
         }
     }
@@ -67,6 +61,36 @@ function dirContains(parent, dir) {
         return !relative.startsWith('..') && !path.isAbsolute(relative);
     }
 }
+
+// #####################################################################################################################
+
+/**
+ *
+ * @param object
+ * @param path
+ * @returns {undefined|*}
+ */
+const getObjectProperty = (object, path) => {
+    if (object == null) {
+        return object;
+    }
+
+    if(typeof path !== 'object'){
+        path = {path};
+    }
+
+    for (let property of path) {
+       if(object.hasOwnProperty(property)){
+           object = object[property];
+       }
+       else{
+           object = undefined;
+           break;
+       }
+    }
+
+    return object;
+};
 
 // #####################################################################################################################
 

@@ -1,6 +1,6 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
@@ -29,18 +29,18 @@ import pathGroup from "../helpers/path-group.js";
 function unlinkRelativeFile(eventPath) {
     const ext = path.extname(eventPath).replace(".", "");
 
-    const currentPaths = pathGroup(eventPath, ext, true);
+    const currentPaths = pathGroup(eventPath, ['source', ext], true);
 
     let deleteQueue = [];
 
     switch (ext) {
         case 'scss':
-            deleteQueue.push(currentPaths.development.css + path.relative(currentPaths.scss, eventPath).replace('.scss', '.css'));
-            deleteQueue.push(currentPaths.development.css + path.relative(currentPaths.scss, eventPath).replace('.scss', '.css.map'));
+            deleteQueue.push(currentPaths.target.scss + path.relative(currentPaths.source.scss, eventPath).replace('.scss', '.css'));
+            deleteQueue.push(currentPaths.target.scss + path.relative(currentPaths.source.scss, eventPath).replace('.scss', '.css.map'));
             break
         case 'js':
-            deleteQueue.push(currentPaths.development.js + path.relative(currentPaths.js, eventPath));
-            deleteQueue.push(currentPaths.development.js + path.relative(currentPaths.js, eventPath).replace('.js', '.js.map'));
+            deleteQueue.push(currentPaths.target.js + path.relative(currentPaths.source.js, eventPath));
+            deleteQueue.push(currentPaths.target.js + path.relative(currentPaths.source.js, eventPath).replace('.js', '.js.map'));
             break
     }
 
@@ -69,11 +69,11 @@ function watchFiles() {
 
     for (let pathGroup of config.pathsGroup) {
         if (config.paths.hasOwnProperty(pathGroup)){
-            if(config.paths[pathGroup]['scss']){
-                watchPaths.scss.push(`${config.paths[pathGroup]['scss']}**/*.scss`);
+            if(config.paths[pathGroup]['source']['scss']){
+                watchPaths.scss.push(`${config.paths[pathGroup]['source']['scss']}**/*.scss`);
             }
-            if(config.paths[pathGroup]['js']){
-                watchPaths.js.push(`${config.paths[pathGroup]['js']}**/*.js`);
+            if(config.paths[pathGroup]['source']['js']){
+                watchPaths.js.push(`${config.paths[pathGroup]['source']['js']}**/*.js`);
             }
         }
     }
@@ -105,7 +105,7 @@ function watchFiles() {
 
 watchFiles.displayName = 'watch';
 watchFiles.description = "Compiles scss files and transpiles js files in real time.";
-watchFiles.flags = {'--engine': 'Choose engine node|dart|dart-js'};
+watchFiles.flags = {'--engine': 'Choose engine dart|dart-js'};
 export default watchFiles;
 
 // #####################################################################################################################

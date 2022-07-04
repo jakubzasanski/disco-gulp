@@ -1,19 +1,20 @@
 /**
  * @author Jakub Zasański <jakub.zasanski.dev@gmail.com>
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // #####################################################################################################################
 
+import del from "del";
 import gulp from 'gulp';
 import imagemin, {gifsicle, mozjpeg, optipng, svgo} from 'gulp-imagemin';
 import plumber from 'gulp-plumber';
+import sizeDifference from "gulp-size-difference";
 
 // #####################################################################################################################
 
 import config from '../config.js';
 import errorHandler from '../helpers/error-handler.js';
-import del from "del";
 
 // #####################################################################################################################
 
@@ -21,7 +22,7 @@ import del from "del";
  * Compress all images from all paths group
  */
 function postImages(done) {
-    let tasks = [];
+    const tasks = [];
     config.pathsGroup.forEach(group => {
         tasks.push(new Promise((resolve) => {
             compressImages(group, resolve);
@@ -37,7 +38,7 @@ function postImages(done) {
             const currentPaths = config.paths[group];
 
             const deleteQueue = [
-                `${currentPaths.production.images}**/*`,
+                `${currentPaths.production.images}`,
             ];
 
             del(deleteQueue).then( _ => {
@@ -45,6 +46,7 @@ function postImages(done) {
                     .pipe(plumber({
                         errorHandler: errorHandler
                     }))
+                    .pipe(sizeDifference.start())
                     .pipe(imagemin([
                         gifsicle({
                             interlaced: true,
@@ -55,7 +57,8 @@ function postImages(done) {
                             optimizationLevel: 3
                         }),
                         svgo()
-                    ]))
+                    ], {silent: true}))
+                    .pipe(sizeDifference.stop({title: `IMAGES ${group}`}))
                     .pipe(gulp.dest(currentPaths.production.images))
                     .on("end", _ => callback());
             });
