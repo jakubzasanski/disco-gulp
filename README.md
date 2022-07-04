@@ -21,7 +21,7 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 
 ```text
 ├─┬ build         Optimize your project for production
-│ │ --engine      …Choose engine node|dart|dart-js
+│ │ --engine      …Choose engine dart|dart-js
 │ └─┬ <parallel>
 │   ├─┬ <series>
 │   │ ├── sass-compile
@@ -32,8 +32,8 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 │   └── post-images
 ├─┬ default
 │ └─┬ <series>
-│   └── welcome
-├── welcome       Prints welcome section to the console.
+│   └── disco
+├── disco         Prints disco.
 ├── icon-font     Generate iconfont from svg files
 │   --all         …generate all icon fonts
 │   --group       …set path group
@@ -47,9 +47,9 @@ Support multiple configurable assets paths (etc. `system/assets/`, `admin/assets
 ├── post-images   Optimize your project images for production
 ├── post-js       Compress js files.
 ├── sass-compile  Compile scss to css files.
-│   --engine      …Choose engine node|dart|dart-js
+│   --engine      …Choose engine dart|dart-js
 └── watch         Compiles scss files and transpiles js files in real time.
-    --engine      …Choose engine node|dart|dart-js
+    --engine      …Choose engine dart|dart-js
 ```
 
 ---
